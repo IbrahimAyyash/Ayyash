@@ -10,8 +10,8 @@ by = 2*pi;
 
 %The Number Of Nodes Used In Computing Of The Solution And The
 %Incrementation Value That Was Used
-n = 64;
-m = 64;
+n = 130;
+m = 130;
 dx = 1/n;
 dy = 1/m;
 
@@ -38,25 +38,33 @@ A = 1/(dx^2);
 B = 1/(dy^2);
 C = ((2/dx^2)+(2/dy^2));
 
-U = zeros(n+2,m+2);
+U = ones(n+2,m+2);
 U(:,1) = Fb;
 U(:,end) = Gb;
 U(end,:) = U_b;
-ER = 10;
+Guasscounter = 0;
 
-%The Number Of Iterations Used
-for Q = 1:1000   
-%Guass-Sidel
-for k = 2:m+1
-    for j = 2:n+1
-        Q(j,k) = U(j,k);
-        U(j,k) = (-1/C)*(-A*U(j+1,k) - B*U(j,k-1) - A*U(j+1,k) - B*U(j,k+1) - F(j,k));
-        relER = abs((U(j,k) - Q(j,k))/U(j,k));
-    end
-end
+tic
+err = 1;
+%Guass-Sidel Solver
+while err > 1e-6
+D = U;
 %Top-Side Boundary Condition
 for j = 2:n+1
-        U(1,j) = (-1/C)*(-2*B*U(2,j) - A*U(1,j-1) - A*U(1,j+1) - F(1,j));
+        U(1,j) = (-1/C)*(-F(1,j) - (2*B)*U(2,j) - A*U(1,j-1) - A*U(1,j+1) );
 end
+
+for k = 2:m+1
+    for j = 2:n+1
+        U(j,k) = (-1/C)*(- F(j,k) - A*U(j,k-1) - B*U(j-1,k) - A*U(j,k+1) - B*U(j+1,k));
+        Guasscounter = Guasscounter + 1;
+    end
 end
- surf(U)
+err = max(max(abs((D-U)./D)));
+end
+toc
+surf(U)
+figure
+contour(U)
+disp('Gauss-Sidel Iterations:');
+disp(Guasscounter);
