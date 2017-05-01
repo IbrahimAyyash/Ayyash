@@ -10,8 +10,8 @@ by = 2*pi;
 
 %The Number Of Nodes Used In Computing Of The Solution And The
 %Incrementation Value That Was Used
-n = 130;
-m = 130;
+n = 64;
+m = 64;
 dx = 1/n;
 dy = 1/m;
 
@@ -46,6 +46,8 @@ Guasscounter = 0;
 
 tic
 err = 1;
+omega = 1;
+
 %Guass-Sidel Solver
 while err > 1e-6
 D = U;
@@ -57,6 +59,7 @@ end
 for k = 2:m+1
     for j = 2:n+1
         U(j,k) = (-1/C)*(- F(j,k) - A*U(j,k-1) - B*U(j-1,k) - A*U(j,k+1) - B*U(j+1,k));
+        U(j,k) = omega*U(j,k) + (1 - omega)*D(j,k);
         Guasscounter = Guasscounter + 1;
     end
 end
