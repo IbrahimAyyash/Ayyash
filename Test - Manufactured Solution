@@ -9,21 +9,21 @@ by = 2*pi;
 
 %The Number Of Nodes Used In Computing Of The Solution And The
 %Incrementation Value That Was Used
-n = 10;
-m = 10;
+n = 20;
+m = 20;
 dx = 1/n;
 dy = 1/m;
 
 %Computes The Coordinate Discretization Values That Are Used In The
 %Solution And Places Them Into A 2-D Meshgrid To Be Called Upon Later
-a = 2;
-b = 2;
-k = 2;
+a = 1;
+b = 1;
+w = 1;
 
 x = linspace(ax,bx,n+2);
 y = linspace(ay,by,m+2);
-[X,Y] = meshgrid(x,y);
-F = ((a^2)+(k^2))*(-sin(a*X).*cos(k*(Y-b)));
+[Y,X] = meshgrid(y,x);
+F = ((a^2)+(w^2))*(-sin(a*X).*cos(w*(Y-b)));
 F = -F;
 
 %Coefficients Of The Node Values 
@@ -34,13 +34,13 @@ C = ((2/dx^2)+(2/dy^2));
 %Setting Up A Global Solution Matrix The Contains All Nodular Solutions
 U = ones(n+2,m+2);
 U(:,1) = 0;                           %Left Side Boundary
-U(:,end) = sin(2*pi*a)*cos(k*(y-b));  %Right Side Boundary
-U(end,:) = sin(a*x)*cos(k*b);         %Bottom Side Boundary
+U(:,end) = sin(2*pi*a)*cos(w*(y-b));  %Right Side Boundary
+U(end,:) = sin(a*x)*cos(w*b);         %Bottom Side Boundary
 
 Gausscounter = 0;
 err = 1;
 omega = 1;
-z = -k*sin(a*x)*sin(k*((2*pi)-b));
+z = -w*sin(a*x)*sin(w*((2*pi)-b));
 
 %Guass-Sidel Solver
 while err > 1e-6
@@ -64,12 +64,18 @@ disp(Gausscounter);
 
 
 R = ones(n+2,m+2);
-R = sin(a*X).*cos(k*(Y-b));
+for q = 1:n+2
+    for p = 1:m+2
+        R(p,q) = sin(a*x(q)).*cos(w*(y(p)-b));
+        %R(p,q) = ((a^2)+(w^2))*(-sin(a*x(q))*cos(w*(y(p)-b)));
+    end
+end
 % R(:,1) = 0;
-% R(:,end) = sin(2*pi*a)*cos(k*(y-b));
-% R(end,:) = sin(a*x)*cos(k*b);
-% R(1,:) = -k*sin(a*x)*sin(k*((2*pi)-b));
+% R(:,end) = sin(2*pi*a)*cos(w*(y-b));
+% R(end,:) = sin(a*x)*cos(w*b);
+% R(1,:) = -w*sin(a*x)*sin(w*((2*pi)-b));
 figure
 surf(x,y,R)
 
-% PoissR = ((a^2)+(k^2))*(-sin(a*X)*cos(k*(Y-b)))
+% PoissR = ((a^2)+(w^2))*(-sin(a*X)*cos(w*(Y-b)))
+
