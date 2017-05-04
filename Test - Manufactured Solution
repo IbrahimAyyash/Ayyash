@@ -1,0 +1,75 @@
+%Manufactured solution
+clear all; clc;
+%Initial Values That Were Given In The Problem Statement That Dictate The
+%Bounds For The Problem
+ax = 0;
+ay = 0;
+bx = 2*pi;
+by = 2*pi;
+
+%The Number Of Nodes Used In Computing Of The Solution And The
+%Incrementation Value That Was Used
+n = 10;
+m = 10;
+dx = 1/n;
+dy = 1/m;
+
+%Computes The Coordinate Discretization Values That Are Used In The
+%Solution And Places Them Into A 2-D Meshgrid To Be Called Upon Later
+a = 2;
+b = 2;
+k = 2;
+
+x = linspace(ax,bx,n+2);
+y = linspace(ay,by,m+2);
+[X,Y] = meshgrid(x,y);
+F = ((a^2)+(k^2))*(-sin(a*X).*cos(k*(Y-b)));
+F = -F;
+
+%Coefficients Of The Node Values 
+A = 1/(dx^2);
+B = 1/(dy^2);
+C = ((2/dx^2)+(2/dy^2));
+
+%Setting Up A Global Solution Matrix The Contains All Nodular Solutions
+U = ones(n+2,m+2);
+U(:,1) = 0;                           %Left Side Boundary
+U(:,end) = sin(2*pi*a)*cos(k*(y-b));  %Right Side Boundary
+U(end,:) = sin(a*x)*cos(k*b);         %Bottom Side Boundary
+
+Gausscounter = 0;
+err = 1;
+omega = 1;
+z = -k*sin(a*x)*sin(k*((2*pi)-b));
+
+%Guass-Sidel Solver
+while err > 1e-6
+D = U;
+%Top-Side Boundary Condition
+for j = 2:n+1
+        U(1,j) = (-1/C)*(-F(1,j) - B*U(2,j) - B*(U(2,j)+(2*z(j)*dy)) - A*U(1,j-1) - A*U(1,j+1) );
+end
+for k = 2:m+1
+    for j = 2:n+1
+        U(j,k) = (-1/C)*(- F(j,k) - A*U(j,k-1) - B*U(j-1,k) - A*U(j,k+1) - B*U(j+1,k));
+        U(j,k) = omega*U(j,k) + (1 - omega)*D(j,k);
+        Gausscounter = Gausscounter + 1;
+    end
+end
+err = max(max(abs((D-U)./D)));
+end
+surf(x,y,U)
+disp('Computing Iterations:');
+disp(Gausscounter);
+
+
+R = ones(n+2,m+2);
+R = sin(a*X).*cos(k*(Y-b));
+% R(:,1) = 0;
+% R(:,end) = sin(2*pi*a)*cos(k*(y-b));
+% R(end,:) = sin(a*x)*cos(k*b);
+% R(1,:) = -k*sin(a*x)*sin(k*((2*pi)-b));
+figure
+surf(x,y,R)
+
+% PoissR = ((a^2)+(k^2))*(-sin(a*X)*cos(k*(Y-b)))
