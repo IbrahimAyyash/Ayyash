@@ -24,7 +24,7 @@ y = linspace(ay,by,m+2);
 a = 1;
 b = 1;
 w = 1;
-
+save('ManufacturedSol')
 %This For Loop Computes The Value Of F And Stores Them In A Matrix Of Size
 %n+2 by n+2 That Will Be Called Upon In The Gauss-Sidel and SOR
 %Computations
@@ -103,4 +103,3 @@ title('Analytical Model')
 xlabel('X-Axis')
 ylabel('Y-Axis')
 zlabel('Z-Axis')
-
