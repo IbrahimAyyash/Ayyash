@@ -60,7 +60,7 @@ tic
 Guasscounter = 0;
 err = 1;
 omega = 1;
-
+save('PoissonEquationAP023')
 %This While Loop Allows the Iterative Solver To Keep Computing Until The
 %Error Is To The Specified Poiint Where The Error Is Too Small To Consider
 while err > 1e-6
